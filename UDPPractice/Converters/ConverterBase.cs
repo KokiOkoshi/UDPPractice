@@ -47,8 +47,8 @@ namespace UDPPractice.Converters
         /// <returns></returns>
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!targetType.IsInstanceOfType(value)
-                || targetType != _inputType
+            if (!_inputType.IsInstanceOfType(value)
+                || targetType != _outputType
                 || !TryConvert((TInput)value, out var result, parameter, culture))
             {
                 return DependencyProperty.UnsetValue;
@@ -67,8 +67,8 @@ namespace UDPPractice.Converters
         /// <returns></returns>
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!targetType.IsInstanceOfType(value)
-                || targetType != _outputType
+            if (!_outputType.IsInstanceOfType(value)
+                || targetType != _inputType
                 || !TryConvertBack((TOutput)value, out var result, parameter, culture))
             {
                 return DependencyProperty.UnsetValue;
