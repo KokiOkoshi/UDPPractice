@@ -3,24 +3,87 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:UDPPractice.Views"
+        xmlns:local="clr-namespace:UDPPractice.ViewModels"
+        xmlns:conv="clr-namespace:UDPPractice.Converters"
         mc:Ignorable="d"
-        Title="MainWindow" Height="150" Width="400">
-    <StackPanel>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Content="IPアドレス"/>
-            <TextBox Grid.Row="0" Grid.Column="1"/>
-            <Label Grid.Row="1" Grid.Column="0" Content="ポート番号"/>
-            <TextBox Grid.Row="1" Grid.Column="1"/>
-        </Grid>
-        <Button Content="送信"></Button>
-    </StackPanel>
+        Title="MainWindow" Width="400" SizeToContent="Height" ResizeMode="NoResize">
+    <Window.DataContext>
+        <local:MainWindowViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <Style TargetType="{x:Type TextBox}" x:Key="Textarea">
+            <Setter Property="AcceptsReturn" Value="True"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="VerticalContentAlignment" Value="Top"/>
+            <Setter Property="MinHeight" Value="100"/>
+        </Style>
+        <conv:NullableBooleanInverseConverter x:Key="NullableBooleanInverseConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <DockPanel Grid.Column="0">
+            <StackPanel DockPanel.Dock="Top">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Content="IPアドレス"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SendIpAddress}"/>
+                    <Label Grid.Row="1" Grid.Column="0" Content="ポート番号"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SendPortNo}"/>
+                </Grid>
+            </StackPanel>
+            <TextBox DockPanel.Dock="Top" 
+                     Style="{StaticResource Textarea}" 
+                     Text="{Binding SendData}"/>
+            <Button DockPanel.Dock="Bottom" 
+                    Content="送信" 
+                    Command="{Binding SendCommand}"/>
+        </DockPanel>
+        <DockPanel Grid.Column="1">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" 
+                           Grid.Column="0" 
+                           Content="IPアドレス"/>
+                    <TextBox Grid.Row="0" 
+                             Grid.Column="1" 
+                             Text="{Binding ReceiveIpAddress}"
+                             IsEnabled="{Binding ElementName=_startReceiveCheckBox, Path=IsChecked, Converter={StaticResource NullableBooleanInverseConverter}}"/>
+                    <Label Grid.Row="1" 
+                           Grid.Column="0"
+                           Content="ポート番号"/>
+                    <TextBox Grid.Row="1" 
+                             Grid.Column="1"
+                             Text="{Binding ReceivePortNo}" 
+                             IsEnabled="{Binding ElementName=_startReceiveCheckBox, Path=IsChecked, Converter={StaticResource NullableBooleanInverseConverter}}"/>
+                </Grid>
+                <TextBox DockPanel.Dock="Top" 
+                         Style="{StaticResource Textarea}"
+                         Text="{Binding ReceivedData}"/>
+                <CheckBox Name="_startReceiveCheckBox" 
+                          DockPanel.Dock="Bottom" 
+                          Content="受信開始"
+                          IsThreeState="False"
+                          Command="{Binding StartReceiveCommand}" 
+                          CommandParameter="{Binding ElementName=_startReceiveCheckBox, Path=IsChecked}"/>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
 </Window>
